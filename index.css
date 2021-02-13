@@ -1,0 +1,23 @@
+div.draggebleDiv {
+  position: absolute;
+  z-index: 9;
+  background-color: #f1f1f1;
+  text-align: center;
+  border: 1px solid #d3d3d3;
+  resize: both;
+  overflow: auto;
+  border-radius: 10px;
+}
+
+div.draggebleDiv > div.container > div.headerColor {
+  cursor: move;
+  z-index: 10;
+  background-color: #094a80;
+  color: #fff;
+  border-radius: 40px;
+  border: 1px solid white;
+}
+
+.header-down {
+  padding: 3px;
+}
