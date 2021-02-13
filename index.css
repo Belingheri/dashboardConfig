@@ -9,12 +9,12 @@ div.draggebleDiv {
   border-radius: 10px;
 }
 
-div.draggebleDiv > div.container > div.headerColor {
+.headerColor {
   cursor: move;
   z-index: 10;
   background-color: #094a80;
   color: #fff;
-  border-radius: 40px;
+  border-radius: 35px;
   border: 1px solid white;
 }
 
