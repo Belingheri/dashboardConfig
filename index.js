@@ -60,6 +60,7 @@ function dragElement(elmnt) {
     /* stop moving when mouse button is released:*/
     document.onmouseup = null;
     document.onmousemove = null;
+    handlePosDimChange(elmnt);
   }
 }
 
@@ -90,11 +91,16 @@ function getVisibleColor(color) {
   else return "#ffffff";
 }
 
-function addDiv() {
+function mosso(e) {
+  handlePosDimChange(e[0].target);
+}
+
+function addDiv(id = "", sfondo = "#f1f1f1", coloreBordo = "#ffffff") {
   const draggabileDiv = document.createElement("div");
+  new ResizeObserver(mosso).observe(draggabileDiv);
   draggabileDiv.classList.add("draggebleDiv");
-  draggabileDiv.style.backgroundColor = "#f1f1f1";
-  draggabileDiv.style.borderColor = "#ffffff";
+  draggabileDiv.style.backgroundColor = sfondo;
+  draggabileDiv.style.borderColor = coloreBordo;
   const containerDiv = document.createElement("div");
   containerDiv.classList.add("container");
 
@@ -116,6 +122,7 @@ function addDiv() {
   nameInput.type = "text";
   nameInput.classList.add("form-control");
   nameInput.name = "id";
+  nameInput.value = id;
   nameInput.placeholder = "Nome ...";
   childDiv.appendChild(nameInput);
   containerDiv.appendChild(childDiv);
@@ -132,7 +139,7 @@ function addDiv() {
   const inputSfondo = document.createElement("input");
   inputSfondo.name = "sfondo";
   inputSfondo.type = "color";
-  inputSfondo.value = "#f1f1f1";
+  inputSfondo.value = sfondo;
   inputSfondo.classList.add("form-control");
   inputSfondo.onchange = cambiaSfondo;
   col1div.appendChild(inputSfondo);
@@ -147,13 +154,20 @@ function addDiv() {
   const inputBordo = document.createElement("input");
   inputBordo.name = "bordo";
   inputBordo.type = "color";
-  inputBordo.value = "#ffffff";
+  inputBordo.value = coloreBordo;
   inputBordo.classList.add("form-control");
   inputBordo.onchange = cambiaBordo;
   col2div.appendChild(inputBordo);
   rowDiv.appendChild(col2div);
 
   containerDiv.appendChild(rowDiv);
+
+  const delButton = document.createElement("button");
+  delButton.classList.add("btn", "btn-sm", "bg-danger");
+  delButton.innerHTML = "Canc";
+  delButton.onclick = () => cancellaElemento(draggabileDiv);
+
+  containerDiv.appendChild(delButton);
 
   const spostabile = document.createElement("div");
   spostabile.classList.add("header-down", "headerColor", "my-2");
@@ -174,13 +188,17 @@ function esporta() {
     background: [255, 255, 255],
   };
 
-  document.querySelectorAll(".draggebleDiv").forEach((e, idx) => {
-    const el = getRiquadro(e);
-    el.id = idx;
-    obj.riquadri.push(el);
-  });
+  try {
+    document.querySelectorAll(".draggebleDiv").forEach((e, idx) => {
+      const el = getRiquadro(e);
+      obj.riquadri.push(el);
+    });
+  } catch (e) {
+    return segnalaErrore(e);
+  }
 
-  console.log(obj);
+  if (obj.riquadri.length === 0)
+    return segnalaErrore(new Error("Nessun elemento presente"));
 
   const json = JSON.stringify(obj);
   copyToClipboard(json);
@@ -193,7 +211,9 @@ function esporta() {
 }
 
 function getRiquadro(e) {
+  handlePosDimChange(e);
   const obj = {};
+  obj.id = e.querySelector('input[name="id"]').value;
   obj.h = e.clientHeight;
   obj.w = e.offsetWidth;
   obj.x = e.offsetLeft;
@@ -209,6 +229,9 @@ function getRiquadro(e) {
       .split(", "),
     width: 1,
   };
+
+  ckInfoObj(obj);
+
   return obj;
 }
 
@@ -222,4 +245,25 @@ function copyToClipboard(str) {
   el.select();
   document.execCommand("copy");
   document.body.removeChild(el);
+}
+
+function segnalaErrore(e) {
+  console.error(e);
+  alert(e.message);
+}
+
+function handlePosDimChange(el) {
+  try {
+  } catch (error) {
+    segnalaErrore(error);
+  }
+}
+
+function cancellaElemento(el) {
+  if (confirm("Cancellare Elemento?")) el.remove();
+}
+
+function ckInfoObj(obj) {
+  if (!obj) throw new Error("Nessuna Info ottenibile");
+  if (!obj.id) throw new Error("Campo 'id' non definito");
 }
