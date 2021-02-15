@@ -163,7 +163,7 @@ function addDiv(id = "", sfondo = "#f1f1f1", coloreBordo = "#ffffff") {
   containerDiv.appendChild(rowDiv);
 
   const delButton = document.createElement("button");
-  delButton.classList.add("btn", "btn-sm", "bg-danger");
+  delButton.classList.add("btn", "btn-sm", "btn-outline-danger", "my-2");
   delButton.innerHTML = "Canc";
   delButton.onclick = () => cancellaElemento(draggabileDiv);
 
